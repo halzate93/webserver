@@ -7,7 +7,7 @@ var fs      = require('fs');
 /**
  *  Define the sample application.
  */
-var SampleApp = function() {
+var WebServer  = function() {
 
     //  Scope.
     var self = this;
@@ -43,7 +43,7 @@ var SampleApp = function() {
         }
 
         //  Local cache for static content.
-        self.zcache['index.html'] = fs.readFileSync('./index.html');
+        self.zcache['zombimenterio/index.html'] = fs.readFileSync('./zombimenterio/index.html');
     };
 
 
@@ -92,7 +92,7 @@ var SampleApp = function() {
     /**
      *  Create the routing table entries + handlers for the application.
      */
-    self.createRoutes = function() {
+    /** self.createRoutes = function() {
         self.routes = { };
 
         self.routes['/asciimo'] = function(req, res) {
@@ -104,7 +104,7 @@ var SampleApp = function() {
             res.setHeader('Content-Type', 'text/html');
             res.send(self.cache_get('index.html') );
         };
-    };
+    }; */
 
 
     /**
@@ -112,13 +112,15 @@ var SampleApp = function() {
      *  the handlers.
      */
     self.initializeServer = function() {
-        self.createRoutes();
+        //self.createRoutes();
         self.app = express.createServer();
 
         //  Add handlers for the app (from the routes).
-        for (var r in self.routes) {
+        /*for (var r in self.routes) {
             self.app.get(r, self.routes[r]);
-        }
+        }*/
+
+	self.app.use(express.static('public'));
     };
 
 
@@ -153,7 +155,7 @@ var SampleApp = function() {
 /**
  *  main():  Main code.
  */
-var zapp = new SampleApp();
+var zapp = new WebServer();
 zapp.initialize();
 zapp.start();
 
