@@ -43,7 +43,7 @@ var WebServer  = function() {
         }
 
         //  Local cache for static content.
-        self.zcache['zombimenterio/index.html'] = fs.readFileSync('./zombimenterio/index.html');
+        self.zcache['index.html'] = fs.readFileSync('./index.html');
     };
 
 
