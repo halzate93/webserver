@@ -120,7 +120,7 @@ var WebServer  = function() {
             self.app.get(r, self.routes[r]);
         }
 
-	//self.app.use(express.static('public'));
+	self.app.use(express.static('public'));
     };
 
 
