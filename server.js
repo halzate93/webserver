@@ -2,6 +2,7 @@
 //  OpenShift sample Node application
 var express = require('express');
 var fs      = require('fs');
+var parser = require('ua-parser');
 
 
 /**
@@ -104,6 +105,28 @@ var WebServer  = function() {
             res.setHeader('Content-Type', 'text/html');
             res.send(self.cache_get('index.html') );
         };
+
+	self.routes['/useragent'] = function(req, res){
+	    res.send("<html><body><p>" + parser.parse(req.headers['user-agent']).ua.family + "<p></body></html>");
+	}
+
+	self.routes['/zombimenterio'] = function (req, res){
+	    var browser = parser.parse(req.headers['user-agent']).ua.family;
+
+	    var url = req.originalUrl;
+	    
+	    if(url.charAt(url.length - 1) != '/'){
+		url += '/';
+	    }
+
+	    //console.log(url);
+	    if(browser == "Chrome"){
+		res.redirect(url + 'webgl');
+	    }else{
+		res.redirect(url + 'webplayer');
+	    }
+	}
+
     };
 
 
@@ -115,7 +138,7 @@ var WebServer  = function() {
         self.createRoutes();
         self.app = express.createServer();
 
-        //  Add handlers for the app (from the routes).
+	//  Add handlers for the app (from the routes).
         for (var r in self.routes) {
             self.app.get(r, self.routes[r]);
         }
