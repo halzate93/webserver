@@ -123,14 +123,11 @@ var WebServer  = function() {
 	    }
 	}
 
-	var gzip = function (req, res, next) {
+	self.routes['/zombimenterio/webgl/Release/*'] = function (req, res, next) {
 	    req.url = req.url.replace('Release', 'Compressed') + 'gz';
 	    res.set('Content-Encoding', 'gzip');
 	    next();
 	}
-
-	self.routes['/zombimenterio/webgl/Release/*'] = gzip;
-	self.routes['/webgl/Release/*'] = gzip;
 
     };
 
