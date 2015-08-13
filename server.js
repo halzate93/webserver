@@ -106,10 +106,6 @@ var WebServer  = function() {
             res.send(self.cache_get('index.html') );
         };
 
-	self.routes['/useragent'] = function(req, res){
-	    res.send("<html><body><p>" + parser.parse(req.headers['user-agent']).ua.family + "<p></body></html>");
-	}
-
 	self.routes['/zombimenterio'] = function (req, res){
 	    var browser = parser.parse(req.headers['user-agent']).ua.family;
 
@@ -142,8 +138,10 @@ var WebServer  = function() {
         for (var r in self.routes) {
             self.app.get(r, self.routes[r]);
         }
-
-	self.app.use(express.static('public'));
+	
+	self.app.use(express.compress());
+	
+	self.app.use(express.static('public'), {maxAge: 'oneDay'});
     };
 
 
