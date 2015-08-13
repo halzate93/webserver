@@ -123,6 +123,12 @@ var WebServer  = function() {
 	    }
 	}
 
+	self.routes['/zombimenterio/webgl/Release/*'] = function (req, res, next) {
+	    req.url = req.url.replace('Release', 'Compressed') + 'gz';
+	    res.set('Content-Encoding', 'gzip');
+	    next();
+	}
+
     };
 
 
@@ -134,12 +140,12 @@ var WebServer  = function() {
         self.createRoutes();
         self.app = express.createServer();
 
+	self.app.use(express.compress());
+
 	//  Add handlers for the app (from the routes).
         for (var r in self.routes) {
             self.app.get(r, self.routes[r]);
         }
-	
-	self.app.use(express.compress());
 	
 	self.app.use(express.static('public'), {maxAge: 'oneDay'});
     };
