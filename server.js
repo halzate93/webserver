@@ -2,8 +2,8 @@
 //  OpenShift sample Node application
 var express = require('express');
 var fs      = require('fs');
-var parser = require('ua-parser');
-
+var zombimenterio = require('./zombimenterio.js');
+var halzate = require('./halzate.js');
 
 /**
  *  Define the sample application.
@@ -94,41 +94,23 @@ var WebServer  = function() {
      *  Create the routing table entries + handlers for the application.
      */
     self.createRoutes = function() {
-        self.routes = { };
+        self.routes = {
+	    get: {},
+	    post: {}
+	};
 
-        self.routes['/asciimo'] = function(req, res) {
+        self.routes.get['/asciimo'] = function(req, res) {
             var link = "http://i.imgur.com/kmbjB.png";
             res.send("<html><body><img src='" + link + "'></body></html>");
         };
 
-        self.routes['/'] = function(req, res) {
+        self.routes.get['/'] = function(req, res) {
             res.setHeader('Content-Type', 'text/html');
             res.send(self.cache_get('index.html') );
         };
 
-	self.routes['/zombimenterio'] = function (req, res){
-	    var browser = parser.parse(req.headers['user-agent']).ua.family;
-
-	    var url = req.originalUrl;
-	    
-	    if(url.charAt(url.length - 1) != '/'){
-		url += '/';
-	    }
-
-	    //console.log(url);
-	    if(browser == "Chrome"){
-		res.redirect(url + 'webgl');
-	    }else{
-		res.redirect(url + 'webplayer');
-	    }
-	}
-
-	self.routes['/zombimenterio/webgl/Release/*'] = function (req, res, next) {
-	    req.url = req.url.replace('Release', 'Compressed') + 'gz';
-	    res.set('Content-Encoding', 'gzip');
-	    next();
-	}
-
+	zombimenterio.route(self.routes);
+	halzate.route(self.routes);
     };
 
 
@@ -141,10 +123,15 @@ var WebServer  = function() {
         self.app = express.createServer();
 
 	self.app.use(express.compress());
+	self.app.use(express.bodyParser());
 
 	//  Add handlers for the app (from the routes).
-        for (var r in self.routes) {
-            self.app.get(r, self.routes[r]);
+        for (var r in self.routes.get) {
+            self.app.get(r, self.routes.get[r]);
+        }
+
+	for (var r in self.routes.post) {
+            self.app.post(r, self.routes.post[r]);
         }
 	
 	self.app.use(express.static('public'), {maxAge: 'oneDay'});
@@ -176,8 +163,6 @@ var WebServer  = function() {
     };
 
 };   /*  Sample Application.  */
-
-
 
 /**
  *  main():  Main code.
