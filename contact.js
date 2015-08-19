@@ -15,15 +15,13 @@ var auth = {
 var transport = nodemailer.createTransport(
         mailgun({
             auth: {
-                api_key: 'key-30f61ec51f360f792fe94a2a2a63eeb9',
-                domain: 'sandbox52c9aede558a427b9120c9baa5a7fb80.mailgun.org'
+                api_key: '',
+                domain: ''
             }
         })
     );
 
 exports.sendMail = function(req, res) {
-
-    //console.log(req.body);
     var fullName = req.body.name + " " + req.body.surname;
 
     var mailOptions = {
